@@ -1,0 +1,16 @@
+name: OTLP Monitoring
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  otlp-monitoring:
+    runs-on: ubuntu-latest
+    name: OTLP Monitoring
+    steps:
+      - name: Send metrics to NR OTLP Endpoint
+        uses: codeboten/github-action-to-otlp@v1
+        with:
+          endpoint: "otlp.nr-data.net:443"
+          headers: "api-key=${{ secrets.NEW_RELIC_LICENSE_KEY }}"
