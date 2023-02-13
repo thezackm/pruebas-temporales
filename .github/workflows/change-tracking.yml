@@ -1,0 +1,25 @@
+name: Change Tracking Marker
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  newrelic:
+    runs-on: ubuntu-latest
+    name: New Relic
+    steps:
+      # This step builds a var with the release tag value to use later
+      - name: Set Release Version from Tag
+        run: echo "RELEASE_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+      - name: Test Marker
+        uses: newrelic/deployment-marker-action@v2.1.0
+        with:
+          apiKey: ${{ secrets.NEW_RELIC_API_KEY }}
+          region: "US"
+          guid: ${{ secrets.POSTGRESQL_TEST_GUID }}
+          version: "${{ env.RELEASE_VERSION }}"
+          commit: "${{ github.sha }}"
+          description: "Testing OTLP Release: ${{ github.ref_name }}"
+          deploymentType: "BASIC"
+          user: "${{ github.actor }}"
